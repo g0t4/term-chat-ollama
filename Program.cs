@@ -15,15 +15,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-string askOpenAICompat(string question, string model = "llama3")
+string askOpenAICompat(string question, string model = "llama3", string endpoint = "http://127.0.0.1:11434/v1")
 {
-    // TODO add endpoint parameter so people can point anywhere via url, i.e. to groq.com!
-    System.Console.WriteLine($"model: {model}");
+    System.Console.WriteLine($"model: {model}, endpoint: {endpoint}");
 
-    const string url = "http://127.0.0.1:11434/v1";
     var options = new OpenAI.OpenAIClientOptions
     {
-        Endpoint = new Uri(url)
+        Endpoint = new Uri(endpoint)
     };
 
     // ? catch errors and use generateResponse w/ a meaningful message
