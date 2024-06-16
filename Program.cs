@@ -57,6 +57,7 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
 
     var chatMessages = jsonMessages.Select(toChatMessage).ToList();
 
+    // FYI one diff w/ azure openai is that you deploy a model and name the deployment and pass a URL to the completion endpoint that has the deploy name in it... therefore you never pass a model paramter b/c that is set per deployment... whereas with openai API you pass model as a param in the request body
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
     endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
     Console.WriteLine($"model: {model}, endpoint: {endpoint}");
