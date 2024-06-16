@@ -11,6 +11,7 @@ string buildAzureOpenAIResponse(string completionText)
 {
     // FYI confirmed can remove choices[].content_filter_results but not prompt_filter_results ... though the code could change, see: https://github.com/microsoft/terminal/blob/938b3ec2f2f5e1ba37a951dfdee078b1a7a40394/src/cascadia/QueryExtension/ExtensionPalette.cpp#L326-L355
     // PRN map additional fields that I am ignoring for now like token #s, times, etc: b/c it doesn't really affect win term
+    // FYI can remove all under prompt_filter_results[0].content_filter_results except jailbreak must remain
     const string template = """
 {"choices":[{"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"protected_material_code":{"filtered":false,"detected":false},"protected_material_text":{"filtered":false,"detected":false},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}},"finish_reason":"stop","index":0,"logprobs":null,"message":{"content":"I'm sorry, but I'm not sure what you mean by \"Program\". Are you asking what type of shell you are currently using? If so, you can use the following command to find out:\n\n```\necho $0\n```\n\nThis will print the name of the current shell you are using.","role":"assistant"}}],"created":1711408935,"id":"chatcmpl-foo","model":"gpt-35-turbo","object":"chat.completion","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"jailbreak":{"filtered":false,"detected":false},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"system_fingerprint":null,"usage":{"completion_tokens":62,"prompt_tokens":359,"total_tokens":421}}
 """;
@@ -72,7 +73,7 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
     // "max_tokens":800,"temperature":0.7,"frequency_penalty":0,"presence_penalty":0,"top_p":0.95,"stop":"None"
     var chatOptions = new ChatCompletionOptions
     {
-        MaxTokens = 150,
+        MaxTokens = 150, // 800 passed
         Temperature = 0.7f,
         TopP = 0.95f,
         PresencePenalty = 0,
