@@ -96,8 +96,16 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
     // ? catch errors and use generateResponse w/ a meaningful message;
     var client = new ChatClient(model, apiKey ?? "whatever", options);
 
-
-    var response = client.CompleteChat(chatMessages);
+    // "max_tokens":800,"temperature":0.7,"frequency_penalty":0,"presence_penalty":0,"top_p":0.95,"stop":"None"
+    var chatOptions = new ChatCompletionOptions
+    {
+        MaxTokens = 150,
+        Temperature = 0.7f,
+        TopP = 0.95f,
+        PresencePenalty = 0,
+        FrequencyPenalty = 0,
+    };
+    var response = client.CompleteChat(chatMessages, options: chatOptions);
     var completionText = response.Value.Content[0].Text;
     return buildAzureOpenAIResponse(completionText);
 
