@@ -14,7 +14,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/test", () =>
+string askOllama(string question)
 {
     const string url = "http://127.0.0.1:11434/v1";
     var options = new OpenAI.OpenAIClientOptions
@@ -24,9 +24,14 @@ app.MapGet("/test", () =>
 
     // ? catch errors and use generateResponse w/ a meaningful message
     var client = new ChatClient("llama3", "whatever-key", options);
-    var response = client.CompleteChat("What is the program?");
+    var response = client.CompleteChat(question);
     var completionText = response.Value.Content[0].Text;
     return generateResponse(completionText);
+}
+
+app.MapGet("/test", () =>
+{
+    return askOllama("what is a program?");
 });
 
 string generateResponse(string completionText)
@@ -47,11 +52,11 @@ app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
 
-    JsonNode jsonObject = JsonNode.Parse(json);
+    var jsonObject = JsonNode.Parse(json);
     var messages = jsonObject["messages"].AsArray();
     var lastMessage = messages[messages.Count - 1].AsObject();
     var question = lastMessage["content"].AsValue().ToString();
-    return question;
+    return askOllama(question);
 });
 
 app.MapPost("/constant/{*rest}", (HttpContext context) =>
