@@ -44,17 +44,14 @@ string generateResponse(string completionText)
 
 app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
 {
-    using (StreamReader reader = new StreamReader(context.Request.Body))
-    {
-        string json = await reader.ReadToEndAsync();
+    using var reader = new StreamReader(context.Request.Body);
+    string json = await reader.ReadToEndAsync();
 
-        JsonNode jsonObject = JsonNode.Parse(json);
-        var messages = jsonObject["messages"].AsArray();
-        var lastMessage = messages[messages.Count - 1].AsObject();
-        var question = lastMessage["content"].AsValue().ToString();
-        return question;
-
-    }
+    JsonNode jsonObject = JsonNode.Parse(json);
+    var messages = jsonObject["messages"].AsArray();
+    var lastMessage = messages[messages.Count - 1].AsObject();
+    var question = lastMessage["content"].AsValue().ToString();
+    return question;
 });
 
 app.MapPost("/constant/{*rest}", (HttpContext context) =>
