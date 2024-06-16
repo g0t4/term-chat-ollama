@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Mvc;
 using OpenAI.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-string askOllama(string question)
+string askOllama(string question, string model = "llama3")
 {
+    System.Console.WriteLine($"model: {model}");
+
     const string url = "http://127.0.0.1:11434/v1";
     var options = new OpenAI.OpenAIClientOptions
     {
@@ -23,7 +26,7 @@ string askOllama(string question)
     };
 
     // ? catch errors and use generateResponse w/ a meaningful message
-    var client = new ChatClient("llama3", "whatever-key", options);
+    var client = new ChatClient(model, "whatever-key", options);
     var response = client.CompleteChat(question);
     var completionText = response.Value.Content[0].Text;
     return buildAzureOpenAIResponse(completionText);
@@ -43,7 +46,7 @@ string buildAzureOpenAIResponse(string completionText)
 }
 
 // todo pass model name param
-app.MapPost("/llama3", async (HttpContext context) =>
+app.MapPost("/answer", async (HttpContext context, [FromQuery] string? model) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -52,7 +55,7 @@ app.MapPost("/llama3", async (HttpContext context) =>
     var messages = jsonObject["messages"].AsArray();
     var lastMessage = messages[messages.Count - 1].AsObject();
     var question = lastMessage["content"].AsValue().ToString();
-    return askOllama(question);
+    return askOllama(question, model);
 });
 
 // TESTING ENDPOINTS:
