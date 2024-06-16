@@ -1,0 +1,6 @@
+@term_chat_ollama_HostAddress = http://localhost:5218
+
+GET {{term_chat_ollama_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
