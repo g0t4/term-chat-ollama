@@ -1,3 +1,5 @@
+using OpenAI.Chat;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -10,6 +12,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("/test", () =>
+{
+    const string url = "http://127.0.0.1:11434/v1";
+    var options = new OpenAI.OpenAIClientOptions
+    {
+        Endpoint = new Uri(url)
+    };
+
+    var client = new ChatClient("llama3", "whatever-key", options);
+    var response = client.CompleteChat("What is the program?");
+    return response.Value.Content;
+});
 
 app.MapPost("/fake/{*rest}", (HttpContext context) =>
 {
