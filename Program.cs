@@ -11,7 +11,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/fake/{*rest}", (HttpContext context ) =>
+app.MapPost("/fake/{*rest}", (HttpContext context) =>
 {
     context.Response.Headers.TryAdd("Content-Type", "application/json");
 
