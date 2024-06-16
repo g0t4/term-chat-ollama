@@ -50,7 +50,6 @@ string buildAzureOpenAIResponse(string completionText)
     return json.ToString();
 }
 
-// todo pass model name param
 app.MapPost("/answer", async (HttpContext context, string? model, string? endpoint, [FromHeader(Name = "api-key")] string? apiKey) =>
 {
     using var reader = new StreamReader(context.Request.Body);
