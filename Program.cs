@@ -49,13 +49,14 @@ app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
     {
         string json = await reader.ReadToEndAsync();
 
-        // Parse the JSON string
         JsonNode jsonObject = JsonNode.Parse(json);
-        return jsonObject.ToString();
-    }
-    // var json = JsonNode.Parse(body).AsObject();
+        // return jsonObject.ToString();
 
-    // return json.ToString();
+        var messages = jsonObject["messages"].AsArray();
+        return messages.ToString();
+
+
+    }
 });
 
 app.MapPost("/constant/{*rest}", (HttpContext context) =>
