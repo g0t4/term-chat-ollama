@@ -15,7 +15,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-string askOpenAICompat(string question, string? model = null, string? endpoint = null)
+string askOpenAICompat(string question, string? model = null, string? endpoint = null, string? apiKey = null)
 {
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
     endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
@@ -27,8 +27,8 @@ string askOpenAICompat(string question, string? model = null, string? endpoint =
         Endpoint = new Uri(endpoint)
     };
 
-    // ? catch errors and use generateResponse w/ a meaningful message
-    var client = new ChatClient(model, "whatever-key", options);
+    // ? catch errors and use generateResponse w/ a meaningful message;
+    var client = new ChatClient(model, apiKey ?? "whatever", options);
     var response = client.CompleteChat(question);
     var completionText = response.Value.Content[0].Text;
     return buildAzureOpenAIResponse(completionText);
@@ -48,7 +48,7 @@ string buildAzureOpenAIResponse(string completionText)
 }
 
 // todo pass model name param
-app.MapPost("/answer", async (HttpContext context, string? model, string? endpoint) =>
+app.MapPost("/answer", async (HttpContext context, string? model, string? endpoint, [FromHeader(Name = "api-key")] string? apiKey) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -57,7 +57,7 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
     var messages = jsonObject["messages"].AsArray();
     var lastMessage = messages[messages.Count - 1].AsObject();
     var question = lastMessage["content"].AsValue().ToString();
-    return askOpenAICompat(question, model: model, endpoint: endpoint);
+    return askOpenAICompat(question, model: model, endpoint: endpoint, apiKey: apiKey);
 });
 
 // TESTING ENDPOINTS:
