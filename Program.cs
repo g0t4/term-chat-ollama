@@ -15,8 +15,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-string askOpenAICompat(string question, string model = "llama3", string endpoint = "http://127.0.0.1:11434/v1")
+string askOpenAICompat(string question, string? model = null, string? endpoint = null)
 {
+    model = string.IsNullOrEmpty(model) ? "llama3" : model;
+    endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
+
     System.Console.WriteLine($"model: {model}, endpoint: {endpoint}");
 
     var options = new OpenAI.OpenAIClientOptions
@@ -45,7 +48,7 @@ string buildAzureOpenAIResponse(string completionText)
 }
 
 // todo pass model name param
-app.MapPost("/answer", async (HttpContext context, string? model) =>
+app.MapPost("/answer", async (HttpContext context, string? model, string? endpoint) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -54,7 +57,7 @@ app.MapPost("/answer", async (HttpContext context, string? model) =>
     var messages = jsonObject["messages"].AsArray();
     var lastMessage = messages[messages.Count - 1].AsObject();
     var question = lastMessage["content"].AsValue().ToString();
-    return askOpenAICompat(question, model);
+    return askOpenAICompat(question, model: model, endpoint: endpoint);
 });
 
 // TESTING ENDPOINTS:
