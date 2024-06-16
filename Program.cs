@@ -15,8 +15,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-string askOllama(string question, string model = "llama3")
+string askOpenAICompat(string question, string model = "llama3")
 {
+    // TODO add endpoint parameter so people can point anywhere via url, i.e. to groq.com!
     System.Console.WriteLine($"model: {model}");
 
     const string url = "http://127.0.0.1:11434/v1";
@@ -46,7 +47,7 @@ string buildAzureOpenAIResponse(string completionText)
 }
 
 // todo pass model name param
-app.MapPost("/answer", async (HttpContext context, [FromQuery] string? model) =>
+app.MapPost("/answer", async (HttpContext context, string? model) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -55,13 +56,13 @@ app.MapPost("/answer", async (HttpContext context, [FromQuery] string? model) =>
     var messages = jsonObject["messages"].AsArray();
     var lastMessage = messages[messages.Count - 1].AsObject();
     var question = lastMessage["content"].AsValue().ToString();
-    return askOllama(question, model);
+    return askOpenAICompat(question, model);
 });
 
 // TESTING ENDPOINTS:
 app.MapGet("/program", () =>
 {
-    return askOllama("what is a program?");
+    return askOpenAICompat("what is a program?");
 });
 
 app.MapPost("/static", (HttpContext context) =>
