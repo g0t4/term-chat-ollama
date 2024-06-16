@@ -20,8 +20,8 @@ string askOpenAICompat(string question, string? model = null, string? endpoint =
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
     endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
 
-    System.Console.WriteLine($"model: {model}, endpoint: {endpoint}\nquestion: {question}");
-    System.Console.WriteLine($"apiKey: {apiKey}");
+    Console.WriteLine($"model: {model}, endpoint: {endpoint}\nquestion: {question}");
+    // System.Console.WriteLine($"apiKey: {apiKey}");
 
     var options = new OpenAI.OpenAIClientOptions
     {
