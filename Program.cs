@@ -90,8 +90,10 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
 
 
 // TESTING ENDPOINTS:
-app.MapGet("/program", () =>
+app.MapGet("/program", (HttpContext context) =>
 {
+    context.Response.Headers.TryAdd("Content-Type", "application/json");
+
     return askOpenAICompat("what is a program?");
 });
 
