@@ -58,6 +58,7 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
     var jsonObject = JsonNode.Parse(json);
     var jsonMessages = jsonObject["messages"].AsArray();
 
+    // FYI probably could deserialize jsonObject using ChatCompletionOptions class? it seems to match (messages => chat messages, params)
     ChatMessage toChatMessage(JsonNode message)
     {
         var role = message["role"].AsValue().ToString();
@@ -85,7 +86,6 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
 
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
     endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
-
     Console.WriteLine($"model: {model}, endpoint: {endpoint}");
     // System.Console.WriteLine($"apiKey: {apiKey}");
 
