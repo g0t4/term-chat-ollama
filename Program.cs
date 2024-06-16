@@ -29,11 +29,6 @@ string askOllama(string question)
     return buildAzureOpenAIResponse(completionText);
 }
 
-app.MapGet("/test", () =>
-{
-    return askOllama("what is a program?");
-});
-
 string buildAzureOpenAIResponse(string completionText)
 {
     const string template = """
@@ -47,7 +42,8 @@ string buildAzureOpenAIResponse(string completionText)
     return json.ToString();
 }
 
-app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
+// todo pass model name param
+app.MapPost("/llama3", async (HttpContext context) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -59,7 +55,13 @@ app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
     return askOllama(question);
 });
 
-app.MapPost("/constant/{*rest}", (HttpContext context) =>
+// TESTING ENDPOINTS:
+app.MapGet("/program", () =>
+{
+    return askOllama("what is a program?");
+});
+
+app.MapPost("/static", (HttpContext context) =>
 {
     context.Response.Headers.TryAdd("Content-Type", "application/json");
 
