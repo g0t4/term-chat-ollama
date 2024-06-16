@@ -42,7 +42,23 @@ string generateResponse(string completionText)
     return json.ToString();
 }
 
-app.MapPost("/fake/{*rest}", (HttpContext context) =>
+app.MapPost("/llama3/{*rest}", async (HttpContext context) =>
+{
+
+    using (StreamReader reader = new StreamReader(context.Request.Body))
+    {
+        string json = await reader.ReadToEndAsync();
+
+        // Parse the JSON string
+        JsonNode jsonObject = JsonNode.Parse(json);
+        return jsonObject.ToString();
+    }
+    // var json = JsonNode.Parse(body).AsObject();
+
+    // return json.ToString();
+});
+
+app.MapPost("/constant/{*rest}", (HttpContext context) =>
 {
     context.Response.Headers.TryAdd("Content-Type", "application/json");
 
