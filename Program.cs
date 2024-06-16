@@ -55,11 +55,56 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
     string json = await reader.ReadToEndAsync();
 
     var jsonObject = JsonNode.Parse(json);
-    var messages = jsonObject["messages"].AsArray();
-    var lastMessage = messages[messages.Count - 1].AsObject();
-    var question = lastMessage["content"].AsValue().ToString();
-    return askOpenAICompat(question, model: model, endpoint: endpoint, apiKey: apiKey);
+    var jsonMessages = jsonObject["messages"].AsArray();
+
+    ChatMessage toChatMessage(JsonNode message)
+    {
+        var role = message["role"].AsValue().ToString();
+        var content = message["content"].AsValue().ToString();
+        System.Console.WriteLine($"role: {role}, content: {content}");
+        if (role == "user")
+        {
+            return new UserChatMessage(content);
+        }
+        else if (role == "assistant")
+        {
+            return new AssistantChatMessage(content);
+        }
+        else if (role == "system")
+        {
+            return new SystemChatMessage(content);
+        }
+        else
+        {
+            throw new Exception("Invalid role: " + role + " with content: " + content);
+        }
+    }
+
+    var chatMessages = jsonMessages.Select(toChatMessage).ToList();
+
+    model = string.IsNullOrEmpty(model) ? "llama3" : model;
+    endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
+
+    Console.WriteLine($"model: {model}, endpoint: {endpoint}");
+    // System.Console.WriteLine($"apiKey: {apiKey}");
+
+    var options = new OpenAI.OpenAIClientOptions
+    {
+        Endpoint = new Uri(endpoint)
+    };
+
+    // ? catch errors and use generateResponse w/ a meaningful message;
+    var client = new ChatClient(model, apiKey ?? "whatever", options);
+
+
+    var response = client.CompleteChat(chatMessages);
+    var completionText = response.Value.Content[0].Text;
+    return buildAzureOpenAIResponse(completionText);
+
 });
+
+
+
 
 // TESTING ENDPOINTS:
 app.MapGet("/program", () =>

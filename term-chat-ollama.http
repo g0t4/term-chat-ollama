@@ -2,9 +2,9 @@
 
 
 // BELOW is a real capture (using mitmproxy) of actual request from windows terminal when I first got it working so this is the system message + message history below that (which btw has a previous error about invalid API b/c it had failed the last time so that can be removed and instead could put some other conversation history in to simulate that here as needed)... the question typed was just "test" below so change that at some point too to validate ollama answers meaningfully when I get to that point...
-// POST {{term_chat_ollama_HostAddress}}/answer?model=codellama HTTP/2.0
+POST {{term_chat_ollama_HostAddress}}/answer?model=codellama HTTP/2.0
 // POST {{term_chat_ollama_HostAddress}}/answer?model=llama3-70b-8192&endpoint=https://api.groq.com/openai/v1 HTTP/2.0
-POST {{term_chat_ollama_HostAddress}}/answer?model=gpt-4o&endpoint=https://api.openai.com/v1 HTTP/2.0
+# POST {{term_chat_ollama_HostAddress}}/answer?model=gpt-4o&endpoint=https://api.openai.com/v1 HTTP/2.0
 accept-encoding: gzip, deflate
 api-key: foothebar
 accept: application/json
