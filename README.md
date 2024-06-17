@@ -1,3 +1,7 @@
+## video 
+
+[![how to use this](https://img.youtube.com/vi/-QcSRmrsND0/maxresdefault.jpg)](https://youtu.be/-QcSRmrsND0)
+
 ## terminal chat src code:
 
 See `features/llm` branch:
