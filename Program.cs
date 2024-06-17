@@ -23,7 +23,7 @@ string buildAzureOpenAIResponse(string completionText)
     return json.ToString();
 }
 
-app.MapPost("/answer", async (HttpContext context, string? model, string? endpoint, [FromHeader(Name = "api-key")] string? apiKey) =>
+app.MapPost("/answer", async (HttpContext context, string? model, string? backend, [FromHeader(Name = "api-key")] string? apiKey) =>
 {
     using var reader = new StreamReader(context.Request.Body);
     string json = await reader.ReadToEndAsync();
@@ -59,13 +59,13 @@ app.MapPost("/answer", async (HttpContext context, string? model, string? endpoi
 
     // FYI one diff w/ azure openai is that you deploy a model and name the deployment and pass a URL to the completion endpoint that has the deploy name in it... therefore you never pass a model paramter b/c that is set per deployment... whereas with openai API you pass model as a param in the request body
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
-    endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
-    Console.WriteLine($"model: {model}, endpoint: {endpoint}");
+    backend = string.IsNullOrEmpty(backend) ? "http://127.0.0.1:11434/v1" : backend;
+    Console.WriteLine($"model: {model}, backend: {backend}");
     // System.Console.WriteLine($"apiKey: {apiKey}");
 
     var options = new OpenAI.OpenAIClientOptions
     {
-        Endpoint = new Uri(endpoint)
+        Endpoint = new Uri(backend)
     };
 
     // ? catch errors and use generateResponse w/ a meaningful message;
@@ -106,17 +106,17 @@ app.MapPost("/static", (HttpContext context) =>
 """;
 });
 
-string askOpenAICompat(string question, string? model = null, string? endpoint = null, string? apiKey = null)
+string askOpenAICompat(string question, string? model = null, string? backend = null, string? apiKey = null)
 {
     model = string.IsNullOrEmpty(model) ? "llama3" : model;
-    endpoint = string.IsNullOrEmpty(endpoint) ? "http://127.0.0.1:11434/v1" : endpoint;
+    backend = string.IsNullOrEmpty(backend) ? "http://127.0.0.1:11434/v1" : backend;
 
-    Console.WriteLine($"model: {model}, endpoint: {endpoint}\nquestion: {question}");
+    Console.WriteLine($"model: {model}, backend: {backend}\nquestion: {question}");
     // System.Console.WriteLine($"apiKey: {apiKey}");
 
     var options = new OpenAI.OpenAIClientOptions
     {
-        Endpoint = new Uri(endpoint)
+        Endpoint = new Uri(backend)
     };
 
     // ? catch errors and use generateResponse w/ a meaningful message;

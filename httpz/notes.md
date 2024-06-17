@@ -6,16 +6,19 @@ See `features/llm` branch:
 ## Win Terminal Chat Settings => Endpoint Examples
 
 - put the URL into Win Terminal Chat settings Endpoint field
+  - To avoid confusiong about the word `endpoint`:
+    - `endpoint` means the terminal chat settings field (points to intermediate dotnet API or azure openai instance)
+    - `backend` means where the dotnet API forwards the request to (i.e. ollama, groq.com, OpenAI, etc.)
 - ollama
   `ollama serve`
-  - FYI endpoint param (in query string, not for win term chat settings) defaults to ollama http://127.0.0.1:11434/v1
+  - FYI backend param (in query string, not for win term chat settings) defaults to ollama http://127.0.0.1:11434/v1
   - https://fake.openai.azure.com:5000/answer?model=codellama
   - https://fake.openai.azure.com:5000/answer?model=llama3
 - groq.com
-  - https://fake.openai.azure.com:5000/answer?model=llama3-70b-8192&endpoint=https://api.groq.com/openai/v1
+  - https://fake.openai.azure.com:5000/answer?model=llama3-70b-8192&backend=https://api.groq.com/openai/v1
   - provide actual API key
 - OpenAI
-  - https://fake.openai.azure.com:5000/answer?model=gpt-4o&endpoint=https://api.openai.com/v1
+  - https://fake.openai.azure.com:5000/answer?model=gpt-4o&backend=https://api.openai.com/v1
   - provide actual API key
 
 ## commands
